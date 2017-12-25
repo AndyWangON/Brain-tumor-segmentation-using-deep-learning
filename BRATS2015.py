@@ -23,38 +23,6 @@ smooth = 1
 num_of_aug = 1
 num_epoch = 20
 
-#%%
-'''   test  
-src = '/home/andy/Brain_tumor/BRATS2015/BRATS2015_Training/HGG/'
-mask = '**/*OT*.mha'
-import glob
-label = False
-resize=(155,240,240)
-files = glob.glob(src + mask, recursive=True)
-imgs = []
-num_of_aug = 1
-cnt = 0
-print('Processing---', mask)
-for file in files:
-    img = io.imread(file, plugin='simpleitk')
-    if label:
-            #img[img == 4] = 1       #turn enhancing tumor into necrosis
-            #img[img != 1] = 0       #only left enhancing tumor + necrosis
-        img[img != 0] = 1       #Region 1 => 1+2+3+4 complete tumor
-        img = img.astype('float32')
-    else:
-        img = (img-img.mean()) / img.std()      #normalization => zero mean   !!!care for the std=0 problem
-    #img = trans.resize(img, resize, mode='constant')
-    for slice in range(50,80):
-        img_t = img[slice,:,:]
-        img_t =img_t.reshape((1,)+img_t.shape)
-        img_t =img_t.reshape((1,)+img_t.shape)   #become rank 4
-        img_g = augmentation(img_t,num_of_aug)
-        for n in range(img_g.shape[0]):
-            cnt += 1
-            img_temp = img_g[n,:,:,:]
-            imgs.append(img_temp)
-'''
 
 #%%
 
@@ -91,39 +59,6 @@ def n4itk(img):         #must input with sitk img object
     img_mask = sitk.BinaryNot(sitk.BinaryThreshold(img, 0, 0))   ## Create a mask spanning the part containing the brain, as we want to apply the filter to the brain image
     corrected_img = sitk.N4BiasFieldCorrection(img, img_mask)
     return corrected_img    
-#%%
-    '''
-    testing  Flair
-    '''
-src = '/home/andy/Brain_tumor/BRATS2017/Pre-operative_TCGA_GBM_NIfTI_and_Segmentations/'
-mask = '**/*_flair.nii.gz'
-files = glob.glob(src + mask, recursive=True)
-file = files[1]
-
-img = io.imread(file, plugin='simpleitk')
-img = img[100,:,:]
-img =img.reshape((1,)+img.shape)
-img =img.reshape((1,)+img.shape)   #become rank 4
-#img = sitk.ReadImage(file)
-#simg = sitk.GetArrayFromImage(img)
-
-#%%
-
-'''
-    testing  Label
-'''
-src = '/home/andy/Brain_tumor/BRATS2015/BRATS2015_Training/HGG/'
-mask = '**/*OT*.mha'
-files = glob.glob(src + mask, recursive=True)
-file = files[40]
-
-img1 = io.imread(file, plugin='simpleitk')
-img1 = img1[50,:,:]
-img1 =img1.reshape((1,)+img1.shape)
-#img1 =img1.reshape((1,)+img1.shape)   #become rank 4
-#img = sitk.ReadImage(file)
-#simg = sitk.GetArrayFromImage(img)
-
 
     
 #%%
