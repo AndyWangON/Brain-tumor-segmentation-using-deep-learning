@@ -11,3 +11,18 @@ Figure 1 shows an axial slice of the four standard sequences for a glioma patien
 <img alt="MRI contrast example" src="images/MRI.png">  
 <sub><b>Figure 1: </b> One axial slice of an MR image of a high-grade glioma patient. From left to right in row 1: T1-weighted image, T2-weighted image, T2-FLAIR-weighted image T1-weighted image with contrast enhancement. In row 2, showing the three sub-region ground truth labeled by exports. </sub> 
 
+## Method
+<img alt="Overview" src="images/overview.png">  
+<sub><b>Figure 2: </b> The overview of the proposed approach for brain tumor segmentation. </sub> 
+
+At first, we use only one U-net model to do three different segmentation tasks (Full Tumor, Tumor Core, Enhancing Tumor), the result of full tumor is promising but the rest of two is not good. We find out that the problem is because the tumor core and enhancing tumor are too small compare to the whole brain, which means the pixel number of these two labels are too little (average 0.75% for tumor core and 0.45% for enhancing tumor per slice). Therefore, the data imbalanced problem cause that model tend to predict “no tumor” but still can get good result. According to Figure 1, we knew that tumor core must be inside of edema, and enhancing tumor is part of tumor core. To solve the problem, we use the advantage of full tumor prediction and calculating the center point of full tumor, then use the center point to crop out the training data for tumor core and enhancing tumor (shown in Figure 3). The number of cropping depend on the size of full tumor and we even crop the overlap part to do data-augmentation, cropping size is 64x64 fixed. After cropping, the ratio of tumor core and enhancing tumor have achieved average 12.7% and 7.6% per training patch.
+
+<img alt="Cropping method" src="images/cropping.png">  
+<sub><b>Figure 3: </b> The cropping method we proposed for improving the performance of tumor core and enhancing tumor segmentation. Cropping the T1c image according to center point of full tumor prediction. The patch size is 64x64 and if the tumor size is bigger than 64x64, we crop more than 1 patch. </sub> 
+
+Then we put the 64x64 training data into another U-net model to train and predict. The result of tumor core prediction and enhancing tumor prediction will be paste back to original full tumor prediction according the center point we got. Fig. 3-3 present the flowchart of the proposed approach.  Instead of using all MRI modalities as, we only use T2 and Flair data for full tumor segmentation and only T1ce for tumor core/enhancing tumor segmentation to accelerate training. According to, to those radiologists, the edema was segmented primarily from T2 images and FLAIR was used to cross-check the extension of the edema and discriminate it against ventricles and other fluid-filled structures. Tumor core and enhancing tumor was both segmented by evaluating hyper-intensities in T1ce images.
+
+<img alt="Flowchart" src="images/flowchart.png">  
+<sub><b>Figure 4: </b> we use T2 and Flair image (after pre-processing) as input to a 9 layers U-net (describe in section 3-2) for full tumor segmentation. Then using the full tumor prediction to crop out the training patches from T1c image (after pre-processing). These training patches are put in to two 7 layers U-net (describe in section 3-2) for tumor core segmentation and enhancing tumor segmentation. Then we combine all three predictions by post-processing and getting final results. </sub> 
+
+
