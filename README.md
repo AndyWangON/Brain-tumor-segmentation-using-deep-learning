@@ -1,5 +1,8 @@
 # Brain Tumor Segmentation Using U-net Model in Multi-Contrast MRI Image
 
+Download link for trained model weights :
+https://drive.google.com/file/d/1hE9It0ZOOeIuSFvt6GdiR_0cq9inWdTy/view?usp=sharing
+
 ## Abstract
 
 With the huge success of deep learning in the field of computer vision, there is rising awareness of its application in medical image. Detection of brain tumor using a segmentation approach is critical in cases, where survival of a subject depends on an accurate and timely clinical diagnosis. Gliomas are the most commonly found tumors having irregular shape and ambiguous boundaries, making them one of the hardest tumors to detect. We present a fully automatic deep learning approach for brain tumor segmentation in multi-contrast magnetic resonance image. The proposed approach is based on fully convolutional network (FCN) and using U-net as the model. Using the dataset provided for the Brain Tumor Segmentation (BraTS) Challenge by the Medical Image Computing and Computer Assisted Intervention (MICCAI) society. Our proposal was validated in the BraTS2018 leaderboard dataset and achieve mean Dice Similarity Coefficient metric of 0.87 in the full tumor region, 0.76 in the tumor core region and 0.71 in the enhancing tumor region, also median Dice Similarity Coefficient metric of 0.90, 0.84, 0.80 for the full tumor, tumor core, and enhancing tumor, respectively.
